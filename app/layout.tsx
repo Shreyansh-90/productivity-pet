@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Link from "next/link"; // Import Next.js Link!
+import Sidebar from "@/components/Sidebar";
+import { ThemeProvider } from "@/components/ThemeProvider"; // Import the provider!
 
 export const metadata: Metadata = {
   title: "Productivity Pet",
@@ -13,31 +14,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="bg-slate-100 text-slate-900 min-h-screen font-sans">
+    <html lang="en" suppressHydrationWarning>
+      <body className="bg-background text-foreground min-h-screen font-sans flex antialiased">
         
-        {/* Navigation Bar */}
-        <nav className="bg-white shadow-sm border-b px-6 py-4 mb-8">
-          <div className="max-w-2xl mx-auto flex gap-6 font-semibold">
-            <Link href="/" className="text-slate-600 hover:text-blue-500 transition">
-              🏠 Home
-            </Link>
-            <Link href="/profile" className="text-slate-600 hover:text-blue-500 transition">
-              👤 Profile
-            </Link>
-            <Link href="/Shop" className="text-slate-600 hover:text-blue-500 transition">
-              🛒 Shop
-            </Link>
-          </div>
-        </nav>
+        {/* Wrapping inside the */}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark" // Start in dark mode by default!
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Sidebar />
 
-        {/* Main Content Container */}
-        <div className="max-w-2xl mx-auto px-6">
-          <div className="bg-white rounded-xl shadow-sm p-8">
-            {/* The 'children' prop is where your page.tsx content gets injected */}
-            {children} 
-          </div>
-        </div>
+          <main className="flex-1 h-screen overflow-y-auto">
+            <div className="max-w-5xl mx-auto p-8">
+              {children}
+            </div>
+          </main>
+        </ThemeProvider>
 
       </body>
     </html>

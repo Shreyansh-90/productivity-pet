@@ -1,7 +1,12 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-// 1. Define the blueprint for our store
+interface Habit {
+  id: string;
+  title: string;
+  xpReward: number;
+}
+
 interface PetStore {
   pet: {
     xp: number;
@@ -12,64 +17,54 @@ interface PetStore {
     evolutionStage: string;
     allergies: string;
   };
-  gainXp: () => void;
+  habits: Habit[];
+  gainXp: (amount: number) => void;
   updateName: (newName: string) => void;
-  buyFood: (cost: number, newFood: string) => void; 
+  buyFood: (cost: number, newFood: string) => void;
+  addHabit: (title: string, xpReward: number) => void;
+  setHabits: (habits: Habit[]) => void;
 }
 
 export const usePetStore = create<PetStore>()(
-  persist (
+  persist(
     (set) => ({
       pet: {
         xp: 0,
-        name: 'Fluffy',
+        name: 'Jarvis',
         age: 0,
         sleepingHabits: 'Sleeps 6 hours a day',
         eatingHabits: 'Eats 4 times a day',
-        evolutionStage: 'Just installed',
+        evolutionStage: 'System Initialized',
         allergies: 'None',
-    },
-    // gainXp increases the xp by 10 and when certain xp reached it updates the evolution stage.
-      gainXp: () => set((state) => {
-        const newXp = state.pet.xp + 10;
+      },
+      habits: [],
+
+      gainXp: (amount: number) => set((state) => {
+        const newXp = state.pet.xp + amount;
         let newEvolutionStage = state.pet.evolutionStage;
 
-        if (newXp >= 100) {
-          newEvolutionStage = "Baby Monster";
-        } else if (newXp >= 30) {
-          newEvolutionStage = "Optimizing according to environment";
-        } else {
-          newEvolutionStage = "Just installed";
-        }
+        if (newXp >= 100) newEvolutionStage = "Baby Monster";
+        else if (newXp >= 30) newEvolutionStage = "Optimizing according to environment";
 
-        return {
-          pet: {
-            ...state.pet,
-            xp:newXp,
-            evolutionStage: newEvolutionStage,
-          }
-        };
+        return { pet: { ...state.pet, xp: newXp, evolutionStage: newEvolutionStage } };
       }),
-      updateName: (newName: string) => set((state) => ({ pet: { ...state.pet, name: newName }})),
 
-       buyFood: (cost: number, newFood: string)  => set((state) => {
-      if (state.pet.xp >= cost) {
-        return {
-          pet: {
-            ...state.pet,
-            xp: state.pet.xp - cost,
-            eatingHabits: `${state.pet.eatingHabits}, ${newFood}`,
-          }
+      updateName: (newName: string) => set((state) => ({ pet: { ...state.pet, name: newName } })),
+      
+      buyFood: (cost: number, newFood: string) => set((state) => {
+        if (state.pet.xp >= cost) {
+          return { pet: { ...state.pet, xp: state.pet.xp - cost, eatingHabits: `${state.pet.eatingHabits}, ${newFood}` } }; 
         }
-      }
-      else {
-          alert("Not enough XP to buy this food!");
-          return state;
-        }
+        return state;
+      }),
+
+      addHabit: (title: string, xpReward: number) => set((state) => ({
+        habits: [{ id: Date.now().toString(), title, xpReward }, ...state.habits]
+      })),
+
+      
+      setHabits: (habits: Habit[]) => set({ habits }),
     }),
-    }),
-    {
-      name: 'pet-storage', // name of the localstorage key
-    }
+    { name: 'pet-storage' }
   )
 );
