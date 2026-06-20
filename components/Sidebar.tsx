@@ -10,7 +10,7 @@ import { LayoutDashboard, User, Store, ChevronLeft, ChevronRight, Settings, Sun,
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const pathname = usePathname();
+  const currentPath = usePathname();
   const { pet } = usePetStore();
   
   // 🌙 Grab theme functions
@@ -19,10 +19,10 @@ export default function Sidebar() {
   useEffect(() => setIsMounted(true), []);
 
   const navItems = [
-    { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-    { name: 'Profile', href: '/profile', icon: User },
-    { name: 'Shop', href: '/shop', icon: Store },
-  ];
+  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/profile', label: 'Profile', icon: User },
+  { to: '/shop', label: 'Shop', icon: Store },
+] as const;
 
   const currentLevel = isMounted ? Math.floor(pet.xp / 100) + 1 : 1;
   const xpPercentage = isMounted ? Math.min((pet.xp % 100), 100) : 0;
@@ -37,25 +37,34 @@ export default function Sidebar() {
       </button>
 
       <div className="flex items-center h-20 px-6 border-b border-border">
-        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
-          <span className="text-primary-foreground font-bold text-xl">P</span>
+        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shrink-0">
+          <span className="text-primary-foreground font-bold text-xl">
+            P
+          </span>
         </div>
-        {!isCollapsed && <span className="ml-3 font-bold text-foreground text-lg whitespace-nowrap">Productivity Pet</span>}
+        {!isCollapsed && 
+        <span className="ml-3 font-bold text-foreground text-lg whitespace-nowrap">
+          Productivity Pet
+        </span>}
       </div>
 
       <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href;
-          const Icon = item.icon;
+        {navItems.map(({ to, label, icon}) =>{
+          const isActive = currentPath === to;
+          const Icon = icon;
+          const item = { name: label, to, icon };
           return (
             <Link
-              key={item.name}
-              href={item.href}
+              key={to}
+              href={to}
               className={`flex items-center px-3 py-3 rounded-none transition-all ${isActive ? 'bg-primary/10 text-primary border-l-2 border-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
               title={isCollapsed ? item.name : ''}
             >
-              <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
-              {!isCollapsed && <span className="ml-3 font-medium whitespace-nowrap">{item.name}</span>}
+              <Icon size={22} strokeWidth={2} className={`w-5 h-5 shrink-0 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
+              {!isCollapsed && 
+              <span className="ml-3 font-medium whitespace-nowrap">
+                {item.name}
+              </span>}
             </Link>
           );
         })}
@@ -81,28 +90,11 @@ export default function Sidebar() {
         </div>
       )}
 
-      {/* 🌙 Themed Settings Area */}
       <div className="p-4 border-t border-border flex flex-col gap-1">
-        
-        {/* Toggle Theme Button */}
-        {isMounted && (
-          <button 
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="flex items-center w-full px-3 py-3 rounded-none text-muted-foreground hover:bg-muted hover:text-foreground transition-all" 
-            title={isCollapsed ? 'Toggle Theme' : ''}
-          >
-            {theme === 'dark' ? (
-              <Sun className="w-5 h-5 flex-shrink-0 text-muted-foreground" />
-            ) : (
-              <Moon className="w-5 h-5 flex-shrink-0 text-muted-foreground" />
-            )}
-            {!isCollapsed && <span className="ml-3 font-medium whitespace-nowrap">Toggle Theme</span>}
-          </button>
-        )}
 
         {/* Existing Settings Button */}
         <button className="flex items-center w-full px-3 py-3 rounded-none text-muted-foreground hover:bg-muted hover:text-foreground transition-all" title={isCollapsed ? 'Settings' : ''}>
-          <Settings className="w-5 h-5 flex-shrink-0 text-muted-foreground" />
+          <Settings className="w-5 h-5 shrink-0 text-muted-foreground" />
           {!isCollapsed && <span className="ml-3 font-medium whitespace-nowrap">Settings</span>}
         </button>
       </div>
