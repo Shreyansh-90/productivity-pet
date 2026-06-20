@@ -5,16 +5,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { usePetStore } from '@/store/usePetStore';
 import { useTheme } from 'next-themes'; // 🌙 Import useTheme
-import { LayoutDashboard, User, Store, ChevronLeft, ChevronRight, Settings, Sun, Moon } from 'lucide-react'; // 🌙 Add Sun and Moon
+import { LayoutDashboard, User, Store, ChevronLeft, ChevronRight, Settings } from 'lucide-react'; //
 
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const currentPath = usePathname();
   const { pet } = usePetStore();
-  
-  // 🌙 Grab theme functions
-  const { theme, setTheme } = useTheme();
 
   useEffect(() => setIsMounted(true), []);
 

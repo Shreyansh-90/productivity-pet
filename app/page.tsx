@@ -1,10 +1,11 @@
 {/* Landing page */}
 import React from 'react'
+import Navbar from '@/components/Navbar';
 
-const Homepage = () => {
+export default function Homepage() {
   return (
     <main className="landing-page">
-      Homepage
+      <Navbar />
     </main>
   )
 }
