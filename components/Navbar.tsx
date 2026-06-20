@@ -24,6 +24,8 @@ const Navbar = () => {
     const currentPath = usePathname();
 
     {/* Pill shaped navigation bar at the top of the page */}
+    {/* https://dribbble.com/shots/24287189-Defi-Landing-Page */}
+
   return (
     <div className='bg-background text-foreground flex'>
         <nav>
