@@ -9,7 +9,6 @@ import { getHabits, createHabit } from '@/actions/habits';
 export default function Home() {
   // Grab the new setHabits function
   const { pet, habits, gainXp, addHabit, setHabits } = usePetStore();
-  const [isMounted, setIsMounted] = useState(false);
   
   const [newHabitText, setNewHabitText] = useState('');
   const [newHabitXp, setNewHabitXp] = useState(10);
@@ -17,7 +16,6 @@ export default function Home() {
 
   // Load habits from PostgreSQL on mount
   useEffect(() => {
-    setIsMounted(true);
     
     async function loadDatabase() {
       try {
@@ -30,8 +28,6 @@ export default function Home() {
     
     loadDatabase();
   }, [setHabits]);
-
-  if (!isMounted) return null;
 
   // The new Database-powered submission
   const handleAddHabit = async (e: React.FormEvent) => {
