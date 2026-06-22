@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { usePetStore } from '@/store/usePetStore';
 import { LayoutDashboard, User, Store, ChevronLeft, ChevronRight, Settings } from 'lucide-react'; // 🌙 Add Sun and Moon
 
+
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
