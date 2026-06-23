@@ -4,11 +4,9 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { usePetStore } from '@/store/usePetStore';
-import { LayoutDashboard, User, Store, ChevronLeft, ChevronRight, Settings } from 'lucide-react'; // 🌙 Add Sun and Moon
-
+import { LayoutDashboard, User, Store, Settings } from 'lucide-react';
 
 export default function Sidebar() {
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const currentPath = usePathname();
   const { pet } = usePetStore();
@@ -18,85 +16,76 @@ export default function Sidebar() {
   }, []);
 
   const navItems = [
-  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/profile', label: 'Profile', icon: User },
-  { to: '/shop', label: 'Shop', icon: Store },
-] as const;
+    { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { to: '/profile', label: 'Profile', icon: User },
+    { to: '/shop', label: 'Shop', icon: Store },
+  ] as const;
 
   const currentLevel = isMounted ? Math.floor(pet.xp / 100) + 1 : 1;
   const xpPercentage = isMounted ? Math.min((pet.xp % 100), 100) : 0;
 
   return (
-    <div className={`relative flex flex-col bg-card border-r border-border h-screen transition-all duration-300 ease-in-out ${isCollapsed ? 'w-20' : 'w-64'}`}>
-      <button
-        onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-3 top-8 bg-card border border-border rounded-full p-1.5 hover:bg-muted transition-colors z-10"
-      >
-        {isCollapsed ? <ChevronRight className="w-4 h-4 text-muted-foreground" /> : <ChevronLeft className="w-4 h-4 text-muted-foreground" />}
-      </button>
-
-      <div className="flex items-center h-20 px-6 border-b border-border">
-        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shrink-0">
-          <span className="text-primary-foreground font-bold text-xl">
-            P
+    <div className="fixed left-0 w-full flex justify-center z-40">
+      <nav className="flex items-center justify-between w-full gap-4 bg-transparent backdrop-blur-[5px] backdrop-saturate-100 border border-white px-6  py-3">
+        
+        {/* Left: Logo Area */}
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center shrink-0">
+            <span className="text-white font-bold text-lg">P</span>
+          </div>
+          <span className="font-bold text-slate-800 text-lg hidden md:block whitespace-nowrap">
+            Productivity Pet
           </span>
         </div>
-        {!isCollapsed && 
-        <span className="ml-3 font-bold text-foreground text-lg whitespace-nowrap">
-          Productivity Pet
-        </span>}
-      </div>
 
-      <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-        {navItems.map(({ to, label, icon}) =>{
-          const isActive = currentPath === to;
-          const Icon = icon;
-          const item = { name: label, to, icon };
-          return (
-            <Link
-              key={to}
-              href={to}
-              className={`flex items-center px-3 py-3 rounded-none transition-all ${isActive ? 'bg-primary/10 text-primary border-l-2 border-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
-              title={isCollapsed ? item.name : ''}
-            >
-              <Icon size={22} strokeWidth={2} className={`w-5 h-5 shrink-0 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
-              {!isCollapsed && 
-              <span className="ml-3 font-medium whitespace-nowrap">
-                {item.name}
-              </span>}
-            </Link>
-          );
-        })}
-      </nav>
+        {/* Center: Navigation Links */}
+        <div className="flex items-center gap-2 sm:gap-6">
+          {navItems.map(({ to, label, icon: Icon }) => {
+            const isActive = currentPath === to;
+            return (
+              <Link
+                key={to}
+                href={to}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all text-sm font-semibold ${
+                  isActive 
+                    ? 'bg-blue-50 text-blue-600' 
+                    : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
+                }`}
+                title={label}
+              >
+                <Icon strokeWidth={2} className="w-5 h-5 shrink-0" />
+                <span className="hidden sm:block whitespace-nowrap">{label}</span>
+              </Link>
+            );
+          })}
+        </div>
 
-      {isMounted && (
-        <div className="px-4 py-2 mt-auto">
-          {!isCollapsed ? (
-            <div className="bg-background rounded-none p-3 border border-border">
-              <div className="flex justify-between text-xs font-bold mb-2">
-                <span className="text-muted-foreground">Level {currentLevel}</span>
-                <span className="text-primary">{pet.xp % 100}/100 XP</span>
+        {/* Right: Pet Stats & Settings */}
+        <div className="flex items-center gap-20">
+          {isMounted && (
+            <div className="hidden lg:flex flex-col w-32">
+              <div className="flex justify-between text-xs font-bold mb-1">
+                <span className="text-slate-500">Level {currentLevel}</span>
+                <span className="text-blue-600">{pet.xp % 100}/100 XP</span>
               </div>
-              <div className="w-full h-2 bg-muted overflow-hidden">
-                <div className="h-full bg-primary transition-all duration-500" style={{ width: `${xpPercentage}%` }} />
+              <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-blue-600 transition-all duration-500" 
+                  style={{ width: `${xpPercentage}%` }} 
+                />
               </div>
-            </div>
-          ) : (
-            <div className="w-full h-2 bg-muted overflow-hidden mt-2" title={`${pet.xp % 100}/100 XP`}>
-              <div className="h-full bg-primary transition-all duration-500" style={{ width: `${xpPercentage}%` }} />
             </div>
           )}
+          
+          <button 
+            className="text-slate-500 hover:text-slate-900 hover:bg-slate-100 p-2 rounded-full transition-colors shrink-0" 
+            title="Settings"
+          >
+            <Settings className="w-5 h-5" />
+          </button>
         </div>
-      )}
 
-      <div className="p-4 border-t border-border flex flex-col gap-1">
-
-        {/* Existing Settings Button */}
-        <button className="flex items-center w-full px-3 py-3 rounded-none text-muted-foreground hover:bg-muted hover:text-foreground transition-all" title={isCollapsed ? 'Settings' : ''}>
-          <Settings className="w-5 h-5 shrink-0 text-muted-foreground" />
-          {!isCollapsed && <span className="ml-3 font-medium whitespace-nowrap">Settings</span>}
-        </button>
-      </div>
+      </nav>
     </div>
   );
 }
