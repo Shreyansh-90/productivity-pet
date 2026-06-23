@@ -6,7 +6,9 @@ import React from 'react'
 // import { useState, useEffect } from 'react';
 // import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Link } from 'lucide-react';
+import Link from 'next/link';
+import '@/app/globals.css';
+
 interface NavLinks {
     label: string;
     href: string;
@@ -14,7 +16,7 @@ interface NavLinks {
 
  const navLinks: NavLinks[] = [
     { label: 'Home', href: '/' },
-    { label: 'Features', href: '/features' },
+    { label: 'Features', href: '/#features' },
     { label: 'Login', href: '/login' },
     { label: 'Sign Up', href: '/signup' }
  ]
@@ -27,24 +29,22 @@ const Navbar = () => {
     {/* https://dribbble.com/shots/24287189-Defi-Landing-Page */}
 
   return (
-    <div className='bg-background text-foreground flex'>
-        <nav>
-            {navLinks.map(({label, href}) =>  {
-                const isActive = currentPath === href;
-                const name = label;
-                const to = href;
+    <div className='fixed top-6 left-0 w-full flex justify-center z-40 px-4 '>
+        <nav className='flex items-center gap-8 bg-white/80 backdrop-blur-md shadow-sm border border-slate-200 rounded-full px-8 py-3'>
+            {navLinks.map((link) => {
+                const isActive = currentPath === link.href;
                 return (
-                    <Link key={href}
-                    href={to}
-                    className={`flex items-center px-3 py-3 rounded-none transition-all ${isActive ? 'bg-primary/10 text-primary border-l-2 border-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}>
-                        <span>{name}</span>
-                    </Link>
-                    
-                ) 
+                    <Link
+                        key={link.label}
+                        href={link.href}
+                        className={`text-sm font-semibold transition-all duration-200 ${isActive ? 'text-slate-900' : 'text-slate-500'}`}>
+                            {link.label}
+                        </Link>
+                )
             })}
         </nav>
     </div>
-  )
+  ) 
 }
 
 export default Navbar
