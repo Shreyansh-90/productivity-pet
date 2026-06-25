@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { CheckCircle2, Circle, Flame, Calendar as CalendarIcon, HeartPulse, Zap, Music, Link } from 'lucide-react';
 import { Calendar } from '@/components/shadcnUI/calendar';
 import { Button } from '@/components/shadcnUI/button';
+import Spotify from '@/components/spotify';
 
 // Mock data for the hover effect
 const dailyHabits = [
@@ -39,8 +40,8 @@ export default function DashboardLayout() {
         <div className="lg:col-span-3 space-y-5">
           
           {/* Header & Actions */}
-          <div>
-            <h1 className="text-4xl font-bold tracking-tight mb-1">Happy Tuesday <span className="text-3xl">👋</span></h1>
+          <div className=''>
+            <h1 className="text-3xl font-bold tracking-tight mb-1">Happy Tuesday <span className="text-3xl">👋</span></h1>
             <p className="text-sm text-slate-500 mb-6">{formattedDate || 'Loading date...'}</p>
             
             <Button variant='default'>
@@ -49,7 +50,7 @@ export default function DashboardLayout() {
           </div>
 
           {/* Interactive Calendar Widget */}
-          <div className="bg-white p-6 rounded-4xl shadow-xl shadow-slate-100/50 border border-slate-100 flex justify-center">
+          <div className="bg-white p-2 rounded-4xl shadow-xl shadow-slate-200/50 border border-slate-100 flex justify-center">
             <Calendar
               mode="single"
               selected={new Date()}
@@ -59,8 +60,8 @@ export default function DashboardLayout() {
                 day: "w-full aspect-square flex justify-center overflow-visible",
               }}
               components={{
-                DayButton: (props) => {
-                  const dateInfo = props.day.date;
+                DayButton: ({ day, modifiers, ...buttonProps }) => {
+                  const dateInfo = day.date;
                   const isHovered = activeDate?.getTime() === dateInfo.getTime();
                   
                   return (
@@ -71,9 +72,9 @@ export default function DashboardLayout() {
                       onClick={() => setActiveDate(isHovered ? null : dateInfo)} // For Mobile
                     >
                       <button 
-                        {...props.htmlAttributes}
+                        {...buttonProps}
                         className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
-                          props.modifiers.today 
+                          modifiers.today 
                             ? 'bg-orange-400 text-white shadow-md shadow-orange-200' 
                             : 'hover:bg-orange-50 text-slate-700'
                         }`}
@@ -114,6 +115,7 @@ export default function DashboardLayout() {
               }}
             />
           </div>
+          <Spotify />
         </div>
 
         {/* ================= MAIN DASHBOARD (Col Span 9) ================= */}
@@ -125,25 +127,25 @@ export default function DashboardLayout() {
             {/* Middle Column: Stats */}
             <div className="space-y-6">
               {/* Sleep Stats */}
-              <div className="bg-white p-6 rounded-4xl shadow-xl shadow-slate-100/50 border border-slate-100">
+              <div className="bg-white p-6 rounded-4xl shadow-xl shadow-slate-200/50 border border-slate-100">
                 <h3 className="font-bold text-lg mb-4">Sleep time</h3>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-[#F8F9FA] p-4 rounded-2xl">
+                  <div className="bg-[#F8F9FA] p-4 rounded-2xl hover:bg-orange-400/5 transition-transform hover:scale-103">
                     <span className="font-bold text-xl">7h 20m</span>
                     <span className="text-sm text-slate-500 block mb-1">Total sleep</span>
                   </div>
 
-                  <div className='bg-[#F8f9fa] p-4 rounded-2xl'>
+                  <div className='bg-[#F8f9fa] p-4 rounded-2xl hover:bg-orange-400/5 transition-transform hover:scale-103'>
                     <span className='font-bold text-xl'>1h 9m</span>
                     <span className='text-sm text-slate-500 block mb-1'>Deep sleep</span>
                   </div>
 
-                  <div className='bg-[#f8f9fa] p-4 rounded-2xl'>
+                  <div className='bg-[#f8f9fa] p-4 rounded-2xl hover:bg-orange-400/5 transition-transform hover:scale-103'>
                     <span className='font-bold text-xl'>7h 28m</span>
                     <span className='text-sm text-slate-500 block mb-1'>Average Sleep</span>
                   </div>
 
-                  <div className="bg-[#F8F9FA] p-4 rounded-2xl">
+                  <div className="bg-[#F8F9FA] p-4 rounded-2xl hover:bg-orange-400/5 transition-transform hover:scale-103">
                     <span className="font-bold text-xl text-indigo-500">82%</span>
                     <span className="text-sm text-slate-500 block mb-1">Quality</span>
                   </div>
@@ -154,12 +156,12 @@ export default function DashboardLayout() {
 
               {/* Vitals Row */}
               <div className="grid grid-cols-2 gap-6">
-                <div className="bg-white p-6 rounded-4xl shadow-xl shadow-slate-100/50 border border-slate-100">
+                <div className="bg-white p-6 rounded-4xl shadow-xl shadow-slate-200/50 border border-slate-100 transition-transform hover:scale-105 hover:bg-orange-400/5">
                    <HeartPulse className="w-6 h-6 text-rose-400 mb-3" />
                    <span className="text-sm text-slate-500 block">Heart rate</span>
                    <span className="font-bold text-2xl">72 <span className="text-sm font-normal text-slate-400">Bpm</span></span>
                 </div>
-                <div className="bg-white p-6 rounded-4xl shadow-xl shadow-slate-100/50 border border-slate-100">
+                <div className="bg-white p-6 rounded-4xl shadow-xl shadow-slate-200/50 border border-slate-100 transition-transform hover:scale-105 hover:bg-orange-400/5">
                    <Zap className="w-6 h-6 text-orange-400 mb-3" />
                    <span className="text-sm text-slate-500 block">Energy</span>
                    <span className="font-bold text-2xl">85 <span className="text-sm font-normal text-slate-400">/100</span></span>
@@ -207,7 +209,7 @@ export default function DashboardLayout() {
           </div>
 
           {/* Bottom Half: Habit Streak (Spans full width of the right container) */}
-          <div className="bg-white p-6 rounded-4xl shadow-xl shadow-slate-100/50 border border-slate-100">
+          <div className="bg-white p-6 rounded-4xl shadow-xl shadow-slate-200/50 border border-slate-100">
             <div className="flex justify-between items-center mb-6">
               <h3 className="font-bold text-lg flex items-center gap-2">
                 Habit streak <span className="text-sm font-normal text-slate-400 bg-slate-100 px-2 py-1 rounded-md ml-2">This month ▾</span>
@@ -217,18 +219,19 @@ export default function DashboardLayout() {
             {/* Horizontal Scrollable Streak Bar */}
             <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
               {[...Array(15)].map((_, i) => {
-                const day = i + 12;
-                const isToday = day === 22;
-                const isMissed = day === 15 || day === 16 || day === 17;
+                const today = new Date().getDate();;
+                const day = new Date().getDate() - 7 + i;;
+                const isToday = new Date().getDate() === day;;
+                const isMissed = day === 19 || day === 22 || day === 23;
                 
                 return (
                   <div key={i} className="flex flex-col items-center gap-2 min-w-12">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold
                       ${isToday ? 'border-4 border-orange-400 text-orange-500' : 
                         isMissed ? 'bg-rose-50 text-rose-400' : 
-                        day < 22 ? 'bg-emerald-50 text-emerald-500' : 'bg-slate-50 text-slate-300'}`}
+                        day < today ? 'bg-emerald-50 text-emerald-500' : 'bg-slate-50 text-slate-300'}`}
                     >
-                      {isToday ? '🔥' : isMissed ? '!' : day < 22 ? '✓' : ''}
+                      {isToday ? '🔥' : isMissed ? '!' : day < today  ? '✓' : ''}
                     </div>
                     <span className={`text-xs ${isToday ? 'font-bold text-slate-800' : 'text-slate-400'}`}>{day}</span>
                   </div>
