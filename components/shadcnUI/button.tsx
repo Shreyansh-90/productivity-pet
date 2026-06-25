@@ -18,6 +18,7 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",
+        spotify: "bg-black text-slate-100 text-md font-bold px-4 py-2 rounded-full hover:scale-105 shadow-sm flex w-full gap-3 justify-center transition-transform",
       },
       size: {
         default:
