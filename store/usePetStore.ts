@@ -43,7 +43,13 @@ export const usePetStore = create<PetStore>()(
         const newXp = state.pet.xp + amount;
         let newEvolutionStage = state.pet.evolutionStage;
 
-        if (newXp >= 100) newEvolutionStage = "Baby Monster";
+        if (newXp === 100) { 
+          newEvolutionStage = "Baby Monster";
+          // when xp reaches 100, reset it to 0.
+          setTimeout(() => {
+            set((state) => ({ pet: { ...state.pet, xp: 0 } }));
+          }, 1000); // Reset after 1 second
+        }
         else if (newXp >= 30) newEvolutionStage = "Optimizing according to environment";
 
         return { pet: { ...state.pet, xp: newXp, evolutionStage: newEvolutionStage } };

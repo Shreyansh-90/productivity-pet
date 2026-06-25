@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { CheckCircle2, Circle, Flame, Calendar as CalendarIcon, HeartPulse, Zap, Music, Link } from 'lucide-react';
+import React, { useState } from 'react';
+import { CheckCircle2, Circle, Calendar as CalendarIcon, HeartPulse, Zap } from 'lucide-react';
 import { Calendar } from '@/components/shadcnUI/calendar';
 import { Button } from '@/components/shadcnUI/button';
 import Spotify from '@/components/spotify';
@@ -14,23 +14,49 @@ const dailyHabits = [
   { id: 4, title: "Wake up & drink water", completed: false, time: "08:30 AM" },
 ];
 
+const dayCompletionMap: Record<number, number> = {
+  1: 0,
+  2: 45,
+  3: 60,
+  4: 20,
+  5: 75,
+  6: 40,
+  7: 25,
+  8: 50,
+  9: 80,
+  10: 0,
+  11: 35,
+  12: 55,
+  13: 45,
+  14: 70,
+  15: 20,
+  16: 0,
+  17: 0,
+  18: 40,
+  19: 0,
+  20: 85,
+  21: 25,
+  22: 95,
+  23: 0,
+  24: 55,
+  25: 45,
+  26: 70,
+  27: 35,
+  28: 100,
+  29: 15,
+  30: 100,
+  31: 10,
+};
+
 export default function DashboardLayout() {
   // State to track which date is currently being hovered/clicked
   const [activeDate, setActiveDate] = useState<Date | null>(null);
-
-  const [formattedDate, setFormattedDate] = useState<string>('');
-
-  useEffect(() => {
-    const today = new Date();
-    const options: Intl.DateTimeFormatOptions = {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    };
-
-    setFormattedDate(today.toLocaleDateString('en-US', options));
-  }, []);
+  const formattedDate = new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
 
   return (
     <div className="min-h-screen border-2 border-amber-600 bg-white p-4 font-sans text-slate-800">
@@ -62,35 +88,58 @@ export default function DashboardLayout() {
               components={{
                 DayButton: ({ day, modifiers, ...buttonProps }) => {
                   const dateInfo = day.date;
+                  const completion = dayCompletionMap[dateInfo.getDate()] ?? 0;
                   const isHovered = activeDate?.getTime() === dateInfo.getTime();
+                  const completionColor = modifiers.today
+                    ? "#f97316"
+                    : "#fb923c";
                   
                   return (
-                    <div 
+                    <div
                       className="relative flex justify-center items-center w-full h-full"
                       onMouseEnter={() => setActiveDate(dateInfo)}
                       onMouseLeave={() => setActiveDate(null)}
                       onClick={() => setActiveDate(isHovered ? null : dateInfo)} // For Mobile
                     >
-                      <button 
+                      <button
                         {...buttonProps}
-                        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
-                          modifiers.today 
-                            ? 'bg-orange-400 text-white shadow-md shadow-orange-200' 
-                            : 'hover:bg-orange-50 text-slate-700'
+                        className={`relative w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
+                          modifiers.today
+                            ? "bg-orange-400 text-white shadow-md shadow-orange-200"
+                            : "hover:bg-orange-50 text-slate-700"
                         }`}
                       >
-                        {dateInfo.getDate()}
+                        {completion > 0 && (
+                          <span
+                            className="pointer-events-none absolute inset-0 rounded-full"
+                            style={{
+                              background: `conic-gradient(${completionColor} ${completion}%, #ebebeb ${completion}% 100%)`,
+                              WebkitMask:
+                                "radial-gradient(farthest-side, transparent calc(100% - 2.5px), #000 0)",
+                              mask: "radial-gradient(farthest-side, transparent calc(100% - 3px), #000 0)",
+                            }}
+                          />
+                        )}
+                        <span className="relative z-10">
+                          {dateInfo.getDate()}
+                        </span>
                       </button>
 
                       {/* ✨ THE HOVER POPOVER ✨ */}
                       {isHovered && (
                         <div className="absolute top-10 left-1/2 -translate-x-1/2 w-64 bg-white rounded-2xl shadow-2xl shadow-slate-200 border border-slate-100 p-4 z-50 animate-in fade-in zoom-in duration-200">
                           <h4 className="font-bold text-slate-800 mb-3 text-left">
-                            {dateInfo.toLocaleDateString('en-US', { month: 'short' })} {dateInfo.getDate()}
+                            {dateInfo.toLocaleDateString("en-US", {
+                              month: "short",
+                            })}{" "}
+                            {dateInfo.getDate()}
                           </h4>
                           <div className="space-y-3">
-                            {dailyHabits.map(habit => (
-                              <div key={habit.id} className="flex items-center justify-between group text-left">
+                            {dailyHabits.map((habit) => (
+                              <div
+                                key={habit.id}
+                                className="flex items-center justify-between group text-left"
+                              >
                                 <div className="flex items-center gap-3">
                                   {habit.completed ? (
                                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
@@ -98,10 +147,14 @@ export default function DashboardLayout() {
                                     <Circle className="w-4 h-4 text-slate-300 shrink-0" />
                                   )}
                                   <div className="flex flex-col">
-                                    <span className={`text-sm font-medium ${habit.completed ? 'text-slate-400 line-through' : 'text-slate-700'}`}>
+                                    <span
+                                      className={`text-sm font-medium ${habit.completed ? "text-slate-400 line-through" : "text-slate-700"}`}
+                                    >
                                       {habit.title}
                                     </span>
-                                    <span className="text-[10px] text-slate-400">{habit.time}</span>
+                                    <span className="text-[10px] text-slate-400">
+                                      {habit.time}
+                                    </span>
                                   </div>
                                 </div>
                               </div>
@@ -175,7 +228,7 @@ export default function DashboardLayout() {
               {/* Task List */}
               <div className="bg-white p-6 rounded-4xl shadow-xl shadow-slate-200/50 border border-slate-100">
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="font-bold text-lg">Today's Todos</h3>
+                  <h3 className="font-bold text-lg">Today&apos;s Todos</h3>
                   <Button variant='outline' className='bg-slate-400/5 rounded-2xl'>
                     + Add Tasks
                   </Button>
